@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "6/HIThEYjSw=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\DARK\\Documents\\Mes_cours\\pASPC3\\TaskFlowAPI\\TaskFlowAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\DARK\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.4\\microsoft.aspnetcore.openapi.9.0.4.nupkg.sha512",
+    "C:\\Users\\DARK\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
