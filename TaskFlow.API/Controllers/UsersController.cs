@@ -6,7 +6,7 @@ namespace TaskFlow.API.Controllers
     [Route("api/users")]
     public class UsersController : ControllerBase
     {
-        POST: /api/users/register
-        POST: /api/users/login
+       // POST: /api/users/register
+       // POST: /api/users/login
     }
 }
