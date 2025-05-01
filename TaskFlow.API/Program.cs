@@ -49,6 +49,14 @@ builder.Logging.AddConsole();  // Ajouter des logs console pour plus de détails
 // Configuration de l'authentification JWT
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
+
+if (string.IsNullOrEmpty(jwtSettings["Key"]))
+{
+    throw new InvalidOperationException("La clé JWT n'est pas configurée.");
+}
+
+var jwtKey = jwtSettings["Key"] ?? throw new InvalidOperationException("La clé JWT n'est pas configurée.");
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -60,7 +68,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)) // Safe to call GetBytes here
         };
     });
 

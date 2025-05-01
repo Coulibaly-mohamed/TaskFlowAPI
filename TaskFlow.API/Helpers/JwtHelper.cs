@@ -12,6 +12,13 @@ namespace TaskFlow.API.Helpers
     {
         public static string GenerateJwtToken(User user, IConfiguration config)
         {
+            // Ensure that the JWT Key is not null or empty
+            var jwtKey = config["Jwt:Key"];
+            if (string.IsNullOrEmpty(jwtKey))
+            {
+                throw new InvalidOperationException("La clé JWT n'est pas configurée.");
+            }
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -19,7 +26,7 @@ namespace TaskFlow.API.Helpers
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
