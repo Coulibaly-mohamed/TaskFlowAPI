@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TaskFlow.API.DTOs
 {
-    public class ProjectDto
+    public class ProjectUpdateDto
     {
         [Required]
         public string Name { get; set; }

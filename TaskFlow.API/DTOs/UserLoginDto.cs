@@ -2,15 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TaskFlow.API.DTOs
 {
-    public class RegisterUserDto
+    public class UserLoginDto
     {
-        [Required]
-        public string Name { get; set; }
-
         [Required, EmailAddress]
         public string Email { get; set; }
 
-        [Required, MinLength(6)]
+        [Required]
         public string Password { get; set; }
     }
 }

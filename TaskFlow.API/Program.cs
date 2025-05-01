@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.API.Data; // Pour TaskFlowDbContext
+using TaskFlow.API.Services.Interfaces;
+using TaskFlow.API.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,12 @@ builder.Services.AddControllers(); // Ajout du support des contrôleurs
 builder.Services.AddDbContext<TaskFlowDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// add swagger
+// Enregistrement des services métiers (injection de dépendances)
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+
+// Swagger
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -30,13 +37,10 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// OpenAPI + Endpoints explorer
 builder.Services.AddEndpointsApiExplorer();
 
-
-
-//debug
-
+// Debug / Logs
 builder.Logging.AddConsole();  // Ajouter des logs console pour plus de détails
 
 var app = builder.Build();
@@ -56,6 +60,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers(); // Nécessaire pour activer les contrôleurs
-
 
 app.Run();

@@ -21,6 +21,6 @@ namespace TaskFlow.API.Models
         [Required]
         public UserRole Role { get; set; }
 
-        public ICollection<Project> Projects { get; set; }
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
     }
 }
