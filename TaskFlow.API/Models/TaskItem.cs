@@ -12,15 +12,15 @@ namespace TaskFlow.API.Models
         public int Id { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public required string Title { get; set; }
 
         [Required]
-        public TaskStatus Status { get; set; }
+        public required TaskStatus Status { get; set; }
 
         [ForeignKey("Project")]
         public int ProjectId { get; set; }
 
-        public Project Project { get; set; }
+        public Project Project { get; set; }  = null!; // Utilisation de null! pour indiquer que cette propriété sera initialisée sans afficher warning cs8618
 
         public DateTime? DueDate { get; set; }
 

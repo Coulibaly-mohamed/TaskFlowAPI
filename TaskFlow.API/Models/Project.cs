@@ -10,7 +10,7 @@ namespace TaskFlow.API.Models
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public string? Description { get; set; }
 
@@ -18,9 +18,7 @@ namespace TaskFlow.API.Models
 
         [ForeignKey("User")]
         public int UserId { get; set; }
-
-        public User User { get; set; }
-
-        public ICollection<TaskItem> Tasks { get; set; }
+        public User User { get; set; } = null!; // Utilisation de null! pour indiquer que cette propriété sera initialisée sans afficher warning cs8618
+        public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>(); // Initialisation de la collection
     }
 }

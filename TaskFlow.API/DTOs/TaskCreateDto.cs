@@ -7,7 +7,7 @@ namespace TaskFlow.API.DTOs
     public class TaskCreateDto
     {
         [Required]
-        public string Title { get; set; }
+        public required string Title { get; set; }
 
         [Required]
         public TaskFlow.API.Models.TaskStatus Status { get; set; } // import  casse bonbon car compilareur erreur (nom déjà utilisé par le compilateur)
