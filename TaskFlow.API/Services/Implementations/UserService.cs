@@ -5,16 +5,19 @@ using TaskFlow.API.Models;
 using TaskFlow.API.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
+using TaskFlow.API.Helpers;
 
 namespace TaskFlow.API.Services.Implementations
 {
     public class UserService : IUserService
     {
         private readonly TaskFlowDbContext _context;
+        private readonly IConfiguration _config; 
 
-        public UserService(TaskFlowDbContext context)
+        public UserService(TaskFlowDbContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         public async Task<User> RegisterAsync(UserRegisterDto dto)
@@ -38,7 +41,8 @@ namespace TaskFlow.API.Services.Implementations
             if (user == null || user.PasswordHash != HashPassword(dto.Password))
                 throw new UnauthorizedAccessException("Invalid credentials.");
 
-            return "MOCK_TOKEN"; // Remplacer par une vraie génération de JWT plus tard
+            // Génère le token JWT et le retourne
+            return JwtHelper.GenerateJwtToken(user, _config);
         }
 
         public async Task<User?> GetByIdAsync(int id)
@@ -56,6 +60,11 @@ namespace TaskFlow.API.Services.Implementations
             using var sha256 = SHA256.Create();
             var hashed = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
             return Convert.ToBase64String(hashed);
+        }
+
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email);
         }
     }
 }

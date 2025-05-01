@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using TaskFlow.API.Data; // Pour TaskFlowDbContext
 using TaskFlow.API.Services.Interfaces;
 using TaskFlow.API.Services.Implementations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +45,24 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Debug / Logs
 builder.Logging.AddConsole();  // Ajouter des logs console pour plus de détails
+
+// Configuration de l'authentification JWT
+
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+        };
+    });
 
 var app = builder.Build();
 
