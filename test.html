@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow - API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+    }
+    .form-container {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="text"], input[type="password"], input[type="email"], textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .response {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f4f4f4;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>TaskFlow API</h1>
+
+    <!-- Connexion -->
+    <div class="form-container">
+      <h2>Se connecter</h2>
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="Entrez votre email" required>
+      <label for="loginPassword">Mot de passe</label>
+      <input type="password" id="loginPassword" placeholder="Entrez votre mot de passe" required>
+      <button onclick="login()">Se connecter</button>
+      <div class="response" id="loginResponse"></div>
+    </div>
+
+    <!-- Inscription -->
+    <div class="form-container">
+      <h2>Inscription</h2>
+      <label for="registerName">Nom</label>
+      <input type="text" id="registerName" placeholder="Entrez votre nom" required>
+      <label for="registerEmail">Email</label>
+      <input type="email" id="registerEmail" placeholder="Entrez votre email" required>
+      <label for="registerPassword">Mot de passe</label>
+      <input type="password" id="registerPassword" placeholder="Entrez votre mot de passe" required>
+      <button onclick="register()">S'inscrire</button>
+      <div class="response" id="registerResponse"></div>
+    </div>
+
+    <!-- Ajout de projet -->
+    <div class="form-container">
+      <h2>Ajouter un projet</h2>
+      <label for="projectName">Nom du projet</label>
+      <input type="text" id="projectName" placeholder="Nom du projet" required>
+      <label for="projectDescription">Description</label>
+      <textarea id="projectDescription" placeholder="Description du projet"></textarea>
+      <label for="jwtToken">Token JWT</label>
+      <input type="text" id="jwtToken" placeholder="Entrez votre token JWT" required>
+      <button onclick="addProject()">Ajouter un projet</button>
+      <div class="response" id="projectResponse"></div>
+    </div>
+
+    <!-- Voir les projets -->
+    <div class="form-container">
+      <h2>Voir les projets</h2>
+      <label for="jwtTokenProjects">Token JWT</label>
+      <input type="text" id="jwtTokenProjects" placeholder="Entrez votre token JWT" required>
+      <button onclick="getProjects()">Voir les projets</button>
+      <div class="response" id="projectsResponse"></div>
+    </div>
+
+    <!-- Ajout de tâche -->
+    <div class="form-container">
+      <h2>Ajouter une tâche</h2>
+      <label for="taskTitle">Titre de la tâche</label>
+      <input type="text" id="taskTitle" placeholder="Titre de la tâche" required>
+      <label for="taskStatus">Statut</label>
+      <select id="taskStatus">
+        <option value="ÀFaire">ÀFaire</option>
+        <option value="EnCours">En cours</option>
+        <option value="Terminé">Terminé</option>
+      </select>
+      <label for="taskProjectId">ID du projet</label>
+      <input type="text" id="taskProjectId" placeholder="ID du projet" required>
+      <label for="taskDueDate">Date d'échéance</label>
+      <input type="text" id="taskDueDate" placeholder="AAAA-MM-JJ">
+      <label for="jwtTokenTask">Token JWT</label>
+      <input type="text" id="jwtTokenTask" placeholder="Entrez votre token JWT" required>
+      <button onclick="addTask()">Ajouter une tâche</button>
+      <div class="response" id="taskResponse"></div>
+    </div>
+
+    <!-- Voir les tâches -->
+    <div class="form-container">
+      <h2>Voir les tâches</h2>
+      <label for="jwtTokenTasks">Token JWT</label>
+      <input type="text" id="jwtTokenTasks" placeholder="Entrez votre token JWT" required>
+      <button onclick="getTasks()">Voir les tâches</button>
+      <div class="response" id="tasksResponse"></div>
+    </div>
+  </div>
+
+  <script>
+    async function register() {
+      const name = document.getElementById("registerName").value;
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+
+      const response = await fetch('https://localhost:7055/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await response.json();
+      document.getElementById("registerResponse").textContent = data.message || data.error || JSON.stringify(data);
+    }
+
+    async function login() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      const response = await fetch('https://localhost:7055/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await response.json();
+      document.getElementById("loginResponse").textContent = data.token ? `Token: ${data.token}` : data.error;
+    }
+
+    async function addProject() {
+      const name = document.getElementById("projectName").value;
+      const description = document.getElementById("projectDescription").value;
+      const jwtToken = document.getElementById("jwtToken").value;
+
+      const response = await fetch('https://localhost:7055/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`
+        },
+        body: JSON.stringify({ name, description })
+      });
+      const data = await response.json();
+      document.getElementById("projectResponse").textContent = data.message || JSON.stringify(data);
+    }
+
+    async function getProjects() {
+      const jwtToken = document.getElementById("jwtTokenProjects").value;
+
+      const response = await fetch('https://localhost:7055/api/projects', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        let html = '<ul>';
+        data.forEach(p => html += `<li><strong>${p.name}</strong> - ${p.description || 'Aucune description'}</li>`);
+        html += '</ul>';
+        document.getElementById("projectsResponse").innerHTML = html;
+      } else {
+        document.getElementById("projectsResponse").textContent = "Aucun projet trouvé ou erreur.";
+      }
+    }
+
+    async function addTask() {
+      const title = document.getElementById("taskTitle").value;
+      const status = document.getElementById("taskStatus").value;
+      const projectId = document.getElementById("taskProjectId").value;
+      const dueDate = document.getElementById("taskDueDate").value;
+      const jwtToken = document.getElementById("jwtTokenTask").value;
+
+      const response = await fetch('https://localhost:7055/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`
+        },
+        body: JSON.stringify({ title, status, projectId, dueDate })
+      });
+      const data = await response.json();
+      document.getElementById("taskResponse").textContent = data.message || JSON.stringify(data);
+    }
+
+    async function getTasks() {
+      const jwtToken = document.getElementById("jwtTokenTasks").value;
+
+      const response = await fetch('https://localhost:7055/api/tasks', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`
+        }
+      });
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        let html = '<ul>';
+        data.forEach(t => html += `<li><strong>${t.title}</strong> - ${t.status} - ${t.dueDate || 'Pas de date'}</li>`);
+        html += '</ul>';
+        document.getElementById("tasksResponse").innerHTML = html;
+      } else {
+        document.getElementById("tasksResponse").textContent = "Aucune tâche trouvée ou erreur.";
+      }
+    }
+  </script>
+</body>
+</html>

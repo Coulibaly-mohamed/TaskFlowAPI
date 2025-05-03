@@ -9,15 +9,27 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Ajout de la configuration CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontendOrigin", policy =>
+    {
+        // Remplace par l'URL de ton frontend, si besoin
+        policy.WithOrigins("http://127.0.0.1:5500")  // ou "http://localhost:5500"
+              .AllowAnyMethod() // Permet toutes les méthodes HTTP
+              .AllowAnyHeader() // Permet tous les headers
+              .AllowCredentials(); // Permet d'envoyer des cookies (utile pour l'authentification JWT)
+    });
+});
+
 // Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()); //Convertir les enums en string (0 en afaire, 1 en en cours, etc.)
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()); // Convertir les enums en string
     });
 
-
-// Add DbContext avec SQL Server
+// Ajouter DbContext avec SQL Server
 builder.Services.AddDbContext<TaskFlowDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -51,7 +63,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     };
     options.UseInlineDefinitionsForEnums(); // Pour menu déroulant des enums dans Swagger UI
-    
+
     options.AddSecurityDefinition("Bearer", securityScheme);
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -75,7 +87,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Logging.AddConsole();  // Ajouter des logs console pour plus de détails
 
 // Configuration de l'authentification JWT
-
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 if (string.IsNullOrEmpty(jwtSettings["Key"]))
@@ -116,6 +127,10 @@ app.UseHttpsRedirection(); // Redirection des requêtes HTTP vers HTTPS
 
 app.UseMiddleware<TaskFlow.API.Middleware.ExceptionMiddleware>(); // Middleware pour gérer les exceptions globalement
 
+// Ajouter l'utilisation de CORS
+app.UseCors("AllowFrontendOrigin");
+
+// Authentification et autorisation
 app.UseAuthentication(); // Authentifie la requête via le token JWT
 app.UseAuthorization();  // Vérifie l’accès aux routes (via [Authorize])
 
