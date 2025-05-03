@@ -106,9 +106,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); // Redirection des requêtes HTTP vers HTTPS
 
-app.UseAuthorization();
+app.UseMiddleware<TaskFlow.API.Middleware.ExceptionMiddleware>(); // Middleware pour gérer les exceptions globalement
+
+app.UseAuthentication(); // Authentifie la requête via le token JWT
+app.UseAuthorization();  // Vérifie l’accès aux routes (via [Authorize])
 
 app.MapControllers(); // Nécessaire pour activer les contrôleurs
 
