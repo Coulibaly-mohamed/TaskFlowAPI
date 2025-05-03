@@ -10,7 +10,12 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers(); // Ajout du support des contrôleurs
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()); //Convertir les enums en string (0 en afaire, 1 en en cours, etc.)
+    });
+
 
 // Add DbContext avec SQL Server
 builder.Services.AddDbContext<TaskFlowDbContext>(options =>
@@ -45,7 +50,8 @@ builder.Services.AddSwaggerGen(options =>
             Id = "Bearer"
         }
     };
-
+    options.UseInlineDefinitionsForEnums(); // Pour menu déroulant des enums dans Swagger UI
+    
     options.AddSecurityDefinition("Bearer", securityScheme);
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
