@@ -38,7 +38,7 @@ namespace TaskFlow.API.Services.Implementations
         public async Task<string> LoginAsync(UserLoginDto dto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
-            if (user == null || user.PasswordHash != HashPassword(dto.Password))
+            if (user == null || user.PasswordHash != HashPassword(dto.Password)) // Vérifie si l'utilisateur existe et si le mot de passe est correct 
                 throw new UnauthorizedAccessException("Invalid credentials.");
 
             // Génère le token JWT et le retourne

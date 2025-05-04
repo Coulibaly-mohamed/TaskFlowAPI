@@ -53,8 +53,13 @@ namespace TaskFlow.API.Services.Implementations
 
         public async Task<bool> DeleteAsync(int id, int userId)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id && p.UserId == userId);
-            if (project == null) return false;
+            var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
+
+            if (project == null)
+                throw new KeyNotFoundException("Le projet n'existe pas.");
+
+            if (project.UserId != userId)
+                throw new UnauthorizedAccessException("Ce projet ne vous appartient pas.");
 
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();

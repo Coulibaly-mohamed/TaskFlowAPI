@@ -71,7 +71,7 @@ namespace TaskFlow.API.Controllers
             var result = await _projectService.DeleteAsync(id, userId);
             if (!result) return NotFound();
 
-            return NoContent();
+            return Ok(new { message = "Projet supprimé avec succès." });
         }
     }
 }
