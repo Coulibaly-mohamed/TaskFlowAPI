@@ -9,12 +9,11 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ajout de la configuration CORS
+// Ajout de la configuration CORS pour tester avec le site web de demo
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendOrigin", policy =>
     {
-        // Remplace par l'URL de ton frontend, si besoin
         policy.WithOrigins("http://127.0.0.1:5500")  // ou "http://localhost:5500"
               .AllowAnyMethod() // Permet toutes les méthodes HTTP
               .AllowAnyHeader() // Permet tous les headers
@@ -45,7 +44,9 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "TaskFlow API",
         Version = "v1",
-        Description = "API de gestion de projets et tâches pour TaskFlow"
+        Description = "API de gestion de projets et tâches pour TaskFlow \n" +
+                      "Cette API permet de gérer les utilisateurs, les projets et les tâches associées." + "\n" +
+                      "Utilisez le token JWT pour accéder aux ressources sécurisées." + "\n" + "Penser a lire le fichier README.md pour plus d'informations." ,
     });
 
     var securityScheme = new OpenApiSecurityScheme
@@ -71,14 +72,14 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Configure le port HTTPS explicitement
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(7055, listenOptions =>
-    {
-        listenOptions.UseHttps();
-    });
-});
+// // Configure le port HTTPS explicitement
+// builder.WebHost.ConfigureKestrel(options =>
+// {
+//     options.ListenAnyIP(7055, listenOptions =>
+//     {
+//         listenOptions.UseHttps();
+//     });
+// });
 
 // OpenAPI + Endpoints explorer
 builder.Services.AddEndpointsApiExplorer();
